@@ -10,8 +10,7 @@ export class StoreService {
   constructor(
     @InjectRepository(Store),
     private readonly storeRepository: Repository<Store>,
-    private readonly entityManager: EntityManager
-    
+    private readonly entityManager: EntityManager,
   ) {}
 
   async create(createStoreDto: CreateStoreDto) {
@@ -28,15 +27,17 @@ export class StoreService {
     return this.storeRepository.find()
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} store`
+  async findOne(id: number) {
+    return this.storeRepository.findOneBy({ id })
   }
 
-  update(id: number, updateStoreDto: UpdateStoreDto) {
-    return `This action updates a #${id} store`
+  async update(id: number, updateStoreDto: UpdateStoreDto) {
+    const item = await this.storeRepository.findOneBy({ id })
+    item.public = updateStoreDto.public
+    await this.entityManager.save(item)
   }
 
   remove(id: number) {
-    return `This action removes a #${id} store`
+    return this.storeRepository.delete({ id })
   }
 }
